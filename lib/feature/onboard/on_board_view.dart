@@ -18,7 +18,7 @@ class _OnBoardViewState extends State<OnBoardView> {
   int _selectedIndex = 0;
   // bool get _isLastPage => OnBoardItems.onBoardItems.length-1 ==_selectedIndex;
 
-*//*  void incrementAndChange() {
+*/ /*  void incrementAndChange() {
     if(_isLastPage){
       return;
     }
@@ -30,7 +30,7 @@ class _OnBoardViewState extends State<OnBoardView> {
     setState(() {
       _selectedIndex++;
     });
-  }*//*
+  }*/ /*
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +65,47 @@ class _OnBoardViewState extends State<OnBoardView> {
 }*/
 
 
-class OnBoardView extends StatelessWidget {
+class OnBoardView extends StatefulWidget {
   const OnBoardView({Key? key}) : super(key: key);
-  final int selectedIndex = 0;
+
+  @override
+  State<OnBoardView> createState() => _OnBoardViewState();
+}
+
+class _OnBoardViewState extends State<OnBoardView> {
+
+  int _selectedIndex = 0;
+
+  bool get _isLastPage => OnBoardItems.onBoardItems.length - 1 == _selectedIndex;
+  // bool get _isFirstPage => _selectedIndex == 0;
+
+  ValueNotifier<bool> isBackEnable = ValueNotifier(false);
+
+  void _incrementAndChange([int? value]) {
+
+    print("$value sadfaadsfadf");
+    if (_isLastPage && value == null) {
+      // _changeBackEnable(true);
+      return;
+    }
+    // _changeBackEnable(false);
+    _incrementSelectedPage(value);
+  }
+
+  // void _changeBackEnable(bool value) {
+  //   if (value == isBackEnable.value) return;
+  //   isBackEnable.value = value;
+  // }
+
+  void _incrementSelectedPage([int? value]) {
+    setState(() {
+      if (value != null) {
+        _selectedIndex = value;
+      } else {
+        _selectedIndex++;
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,20 +117,29 @@ class OnBoardView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TabIndicator(selectedIndex: selectedIndex,),
+              TabIndicator(index: _selectedIndex,),
+              FloatingActionButton(onPressed: () {},),
             ],
           ),
+
         ],
       ),
     );
   }
+
   PageView _pageViewItems() {
     return PageView.builder(
       itemCount: OnBoardItems.onBoardItems.length,
+      onPageChanged: (index) {
+        _incrementAndChange(index);
+      },
       itemBuilder: (context, index) {
         return OnBoardCard(
           model: OnBoardItems.onBoardItems[index],
           index: index,
+          onPressed: (){
+            _incrementAndChange();
+          },
         );
       },
     );
